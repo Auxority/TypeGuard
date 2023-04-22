@@ -1,25 +1,10 @@
-local Array = {}
-Array.__index = Array
-
-local PositiveInteger = require(script.Parent.PositiveInteger)
+--!strict
 
 local Table = require(script.Parent.Table)
+local ArrayEntries = require(script.Parent.ArrayEntries)
 
-function Array.new(validator)
-	local self = setmetatable({}, Array)
-	self._table = Table.new()
-	self._positiveInteger = PositiveInteger.new()
-	self._validator = validator
-
-	return self
+return function(validator: (value: unknown) -> boolean, length: number?): (value: unknown) -> boolean
+    return function(value: unknown): boolean
+        return Table(length)(value) and ArrayEntries(validator)(value)
+    end
 end
-
-function Array:assert(value)
-	self._table:assert(value)
-	for key, currentValue in pairs(value) do
-		self._positiveInteger:assert(key)
-		self._validator:assert(currentValue)
-	end
-end
-
-return Array

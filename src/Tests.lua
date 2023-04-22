@@ -1,72 +1,49 @@
-local TypeGuard = require(script.Parent.TypeGuard)
+local tg = require(script.Parent.TypeGuard)
 
-local testValidator1 = TypeGuard.String.new()
-testValidator1:assert('')
-testValidator1:assert('Hello there!')
-print('Test 1 passed!')
+local validators = {
+    tg.Dictionary({
+        level = tg.PositiveInteger,
+        experience = tg.PositiveInteger,
+        banned_until = tg.Optional(tg.PositiveInteger),
+        is_admin = tg.Boolean,
+        is_developer = tg.Boolean,
+        inventory = tg.Dictionary({
+            item1 = tg.NonEmptyString,
+            item2 = tg.NonEmptyString,
+        }),
+        accessories = tg.Array(tg.NonEmptyString),
+        x = tg.Number,
+        y = tg.Number,
+        z = tg.Number,
+        damage_effect = tg.Integer,
+        health_effect = tg.Integer,
+    }),
+}
 
-local testValidator2 = TypeGuard.NonEmptyString.new()
-testValidator2:assert('Hello there!')
-print('Test 2 passed!')
+local values = {
+    {
+        level = 123,
+        experience = 12345,
+        banned_until = nil,
+        is_admin = false,
+        is_developer = true,
+        inventory = {
+            item1 = 'sword',
+            item2 = 'shield',
+        },
+        accessories = {
+            'health potion',
+            'speed potion',
+        },
+        x = -123.141,
+        y = 0,
+        z = 123.141,
+        damage_effect = -25,
+        health_effect = 10,
+    },
+}
 
-local testValidator3 = TypeGuard.Number.new()
-testValidator3:assert(-12345)
-testValidator3:assert(12345)
-print('Test 3 passed!')
-
-local testValidator4 = TypeGuard.PositiveInteger.new()
-testValidator4:assert(12345)
-print('Test 4 passed!')
-
-local testValidator5 = TypeGuard.Optional.new(
-	TypeGuard.PositiveInteger.new()
-)
-testValidator5:assert(nil)
-testValidator5:assert(12345)
-print('Test 5 passed!')
-
-local testValidator6 = TypeGuard.Dictionary.new({
-	name = TypeGuard.NonEmptyString.new(),
-	experience = TypeGuard.PositiveInteger.new(),
-	level = TypeGuard.PositiveInteger.new(),
-	inventory = TypeGuard.Dictionary.new({
-		item1 = TypeGuard.NonEmptyString.new(),
-		item2 = TypeGuard.NonEmptyString.new(),
-	})
-})
-testValidator6:assert({
-	name = 'Alice',
-	experience = 100,
-	level = 50,
-	inventory = {
-		item1 = 'sword',
-		item2 = 'shield'
-	}
-})
-print('Test 6 passed!')
-
-local testValidator7 = TypeGuard.Dictionary.new({
-	player1 = testValidator6,
-	player2 = testValidator6,
-})
-testValidator7:assert({
-	player1 = {
-		name = 'Alice',
-		experience = 100,
-		level = 50,
-		inventory = {
-			item1 = 'sword',
-			item2 = 'shield'
-		}
-	},
-	player2 = {
-		name = 'Bob',
-		experience = 100,
-		level = 50,
-		inventory = {
-			item1 = 'potion',
-			item2 = 'scroll'
-		}
-	},
-})
-print('Test 7 passed!')
+for i, validator in pairs(validators) do
+    assert(validator(values[i]), string.format('Test %s failed!', i))
+    print(string.format('Test %s passed! (%s/%s)', i, i, #validators))
+end

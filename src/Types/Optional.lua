@@ -1,17 +1,9 @@
-local Optional = {}
-Optional.__index = Optional
+--!strict
 
-function Optional.new(validator)
-	local self = setmetatable({}, Optional)
-	self._validator = validator
-	
-	return self
+local Function = require(script.Parent.Function)
+
+return function(validator: (value: unknown) -> boolean): (value: unknown) -> boolean
+    return function(value: unknown): boolean
+        return value == nil or (Function(validator) and validator(value))
+    end
 end
-
-function Optional:assert(value)
-	if value ~= nil then
-		self._validator:assert(value)
-	end
-end
-
-return Optional

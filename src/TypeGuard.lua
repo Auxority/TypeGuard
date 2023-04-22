@@ -1,12 +1,15 @@
+--!strict
+
 return {
-	Array = require(script.Types.Array),
-	Boolean = require(script.Types.Boolean),
-	Dictionary = require(script.Types.Dictionary),
-	Table = require(script.Types.Table),
-	Integer = require(script.Types.Integer),
-	Optional = require(script.Types.Optional),
-	PositiveInteger = require(script.Types.PositiveInteger),
-	Number = require(script.Types.Number),
-	String = require(script.Types.String),
-	NonEmptyString = require(script.Types.NonEmptyString),
+    Array = require(script.Type.Array),
+    Boolean = require(script.Type.Boolean),
+    Dictionary = require(script.Type.Dictionary),
+    Integer = require(script.Type.Integer),
+    NonEmptyString = require(script.Type.NonEmptyString),
+    Number = require(script.Type.Number),
+    Optional = require(script.Type.Optional),
+    PositiveInteger = require(script.Type.PositiveInteger),
+    String = require(script.Type.String),
+    Table = require(script.Type.Table),
+    Union = require(script.Type.Union),
 }
