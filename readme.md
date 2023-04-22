@@ -11,35 +11,45 @@ If you want to try it out for yourself, you can download the module [here](https
 # Showcase
 
 ```lua
-local TypeGuard = require(script.TypeGuard)
+local tg = require(script.Parent.TypeGuard)
 
-local testValidator = TypeGuard.Dictionary.new({
-	name = TypeGuard.NonEmptyString.new(),
-	experience = TypeGuard.PositiveInteger.new(),
-	level = TypeGuard.PositiveInteger.new(),
-	inventory = TypeGuard.Dictionary.new({
-		item1 = TypeGuard.NonEmptyString.new(),
-		item2 = TypeGuard.NonEmptyString.new(),
-	})
+print(tg.PositiveInteger(1234)) -- Expected output: true
+print(tg.PositiveInteger(-1234)) -- Expected output: false
+
+local nullableNonEmptyString = tg.Optional(tg.NonEmptyString)
+
+print(nullableNonEmptyString('Hello!')) -- Expected output: true
+print(nullableNonEmptyString(nil)) -- Expected output: true
+print(nullableNonEmptyString('')) -- Expected output: false
+
+local itemSchema = tg.Dictionary({
+    id = tg.NonEmptyString,
+    name = tg.NonEmptyString,
+    value = tg.Number,
 })
 
-testValidator:assert({
-	name = 'Alice',
-	experience = 100,
-	level = 50,
-	inventory = {
-		item1 = 'sword',
-		item2 = 'shield'
-	}
+local validationSchema = tg.Dictionary({
+    level = tg.PositiveInteger,
+    cash = tg.Number,
+    inventory = tg.Array(itemSchema),
 })
 
-print('Test has passed without errors!')
-```
-
-Expected output:
-
-```
-Test has passed without errors!
+print(validationSchema({
+    level = 16,
+    cash = 12.15,
+    inventory = {
+        {
+            id = 'gold-sword-a65a4fb4c',
+            name = 'Gold Sword',
+            value = 50.86,
+        },
+        {
+            id = 'iron-sword-b75ce5f3a',
+            name = 'Iron Sword',
+            value = 5.39,
+        },
+    },
+})) -- Expected output: true
 ```
 
 # Usage
